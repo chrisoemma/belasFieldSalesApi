@@ -6,30 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
-        Schema::create('positions', function (Blueprint $table) {
+        Schema::create('lead_status_defaults', function (Blueprint $table) {
             $table->id();
-            $table->integer('client_id')->nullable();
-            $table->string('alias')->nullable();
             $table->string('name');
+            $table->integer('level')->nullable();
+            $table->string('flag')->nullable();//continue,lost,won
             $table->softDeletes();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('positions');
+        Schema::dropIfExists('lead_status_defaults');
     }
 };

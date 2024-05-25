@@ -45,9 +45,10 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'clients'], function () {
      Route::get('company/{company_id}',[ClientController::class,'clients']);
      Route::post('create_company_client/{company_id}',[ClientController::class,'store_company_client']); 
-     Route::put('update_company_client/{client_id}',[ClientController::class,'update_company_client']);
+    //  Route::put('update_client/{client_id}',[ClientController::class,'update_client']);
      Route::post('add_contact_person/{client_id}',[ClientController::class,'add_contact_person']);  
      Route::put('update_contact_person/{client_id}/{contact_person_id}',[ClientController::class,'update_contact_person']);
+     Route::delete('delete_contact_person/{client_id}/{contact_person_id}',[ClientController::class,'delete_contact_person']);
      Route::get('contact_people/{client_id}',[ClientController::class,'contact_people']);    
     });
 

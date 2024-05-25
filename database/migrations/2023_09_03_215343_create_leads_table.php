@@ -17,7 +17,10 @@ return new class extends Migration
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
             $table->integer('company_id');
-            $table->integer('client_contact_people_id');
+            $table->integer('client_contact_people_id')->nullable();
+            $table->integer('client_id');
+            $table->dateTime('created_date');
+            $table->dateTime('created_by');
             $table->integer('source_id')->nullable();
             $table->softDeletes();
             $table->timestamps();

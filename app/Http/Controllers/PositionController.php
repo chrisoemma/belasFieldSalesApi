@@ -19,10 +19,11 @@ class PositionController extends Controller
 
             $positions = Position::all();
 
-            return $this->returnJsonResponse(true, 'Positions retrieved successfully', [
+            $data=[
                 'positions' => $positions,
+            ];
 
-            ]);
+            return $this->returnJsonResponse(true, 'Positions retrieved successfully', $data);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return $this->returnJsonResponse(false, $exception->getMessage(), []);

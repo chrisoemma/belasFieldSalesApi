@@ -25,4 +25,9 @@ class ClientContactPerson extends Model
         'prefered_channel',
         'position_id',
     ];
+
+    public function positions()
+    {
+        return $this->belongsToMany(Position::class, 'contact_person_positions', 'contact_person_id', 'position_id');
+    }
 }

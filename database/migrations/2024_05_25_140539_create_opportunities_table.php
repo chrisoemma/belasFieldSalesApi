@@ -13,16 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lead_statuses', function (Blueprint $table) {
+        Schema::create('opportunities', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('lead_id')->nullable();
             $table->integer('company_id');
+            $table->integer('client_contact_people_id')->nullable();
             $table->integer('client_id');
-            $table->string('status');
+            $table->integer('lead_id')->nullable();
             $table->dateTime('created_date');
-            $table->integer('created_by');
-            $table->integer('lead_scoring_id')->nullable();
+            $table->dateTime('created_by');
+            $table->integer('source_id')->nullable();
+            $table->decimal('amount', 15, 2)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lead_statuses');
+        Schema::dropIfExists('opportunities');
     }
 };

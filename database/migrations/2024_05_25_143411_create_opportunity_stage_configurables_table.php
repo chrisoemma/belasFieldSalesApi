@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('positions', function (Blueprint $table) {
+        Schema::create('opportunity_stage_configurables', function (Blueprint $table) {
             $table->id();
-            $table->integer('client_id')->nullable();
-            $table->string('alias')->nullable();
             $table->string('name');
+            $table->integer('level')->nullable();
+            $table->string('flag')->nullable();
+            $table->integer('company_id');
+            $table->decimal('probability', 5, 2)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('positions');
+        Schema::dropIfExists('opportunity_stage_configurables');
     }
 };

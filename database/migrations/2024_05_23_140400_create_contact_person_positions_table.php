@@ -6,27 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-  
+   
     public function up()
     {
-
-        //this table is not used
-        Schema::create('default_lead_statuses', function (Blueprint $table) {
+        Schema::create('contact_person_positions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('level')->nullable();
+            $table->integer('contact_person_id');
+            $table->integer('position_id');
             $table->softDeletes();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+
     public function down()
     {
-        Schema::dropIfExists('default_lead_statuses');
+        Schema::dropIfExists('contact_person_positions');
     }
 };

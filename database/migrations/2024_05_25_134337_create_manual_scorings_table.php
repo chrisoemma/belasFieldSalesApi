@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('positions', function (Blueprint $table) {
+        Schema::create('manual_scorings', function (Blueprint $table) {
             $table->id();
-            $table->integer('client_id')->nullable();
-            $table->string('alias')->nullable();
-            $table->string('name');
+            $table->enum('name',['Hot','Cold','Warm']);
             $table->softDeletes();
             $table->timestamps();
         });
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('positions');
+        Schema::dropIfExists('manual_scorings');
     }
 };

@@ -6,35 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
+    
     {
-        Schema::create('lead_statuses', function (Blueprint $table) {
+        Schema::create('opportunity_stages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('lead_id')->nullable();
-            $table->integer('company_id');
+            $table->integer('opportunity_id')->nullable();
+            $table->integer('company_id')->nullable();
             $table->integer('client_id');
-            $table->string('status');
+            $table->string('stage');
             $table->dateTime('created_date');
             $table->integer('created_by');
-            $table->integer('lead_scoring_id')->nullable();
+            $table->integer('client_contact_people_id')->nullable();
+            $table->decimal('amount', 15, 2)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('lead_statuses');
+        Schema::dropIfExists('opportunity_stages');
     }
 };

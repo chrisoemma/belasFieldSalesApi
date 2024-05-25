@@ -12,6 +12,13 @@ class Position extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name'
+        'name',
+        'alias',
+        'client_id'
     ];
+
+    public function contactPersons()
+    {
+        return $this->belongsToMany(ClientContactPerson::class, 'contact_person_positions', 'position_id', 'contact_person_id');
+    }
 }
