@@ -6,17 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
     {
-        Schema::create('opportunity_stage_configurables', function (Blueprint $table) {
+        Schema::create('oppoturnity_default_stages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->integer('level')->nullable();
             $table->string('flag')->nullable();
-            $table->integer('company_id');
             $table->decimal('probability', 5, 2)->nullable();
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('opportunity_stage_configurables');
+        Schema::dropIfExists('oppoturnity_default_stages');
     }
 };

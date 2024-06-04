@@ -13,15 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lead_statuses', function (Blueprint $table) {
+        Schema::create('lead_contact_people', function (Blueprint $table) {
             $table->id();
-            $table->integer('lead_id')->nullable();
-            $table->integer('company_id');
-            $table->integer('client_id')->nullable();
-            $table->string('status');
-            $table->dateTime('created_date');
-            $table->integer('created_by')->nullable();
-            $table->integer('lead_scoring_id')->nullable();
+            $table->integer('lead_id');
+            $table->integer('client_contact_people_id');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -34,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lead_statuses');
+        Schema::dropIfExists('lead_contact_people');
     }
 };

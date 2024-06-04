@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('level')->nullable();
-            $table->string('flag')->nullable();//continue,lost,won
+            $table->string('flag')->nullable();//continue,lost, convert
             $table->softDeletes();
             $table->timestamps();
         });
