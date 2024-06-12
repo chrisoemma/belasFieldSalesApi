@@ -141,7 +141,125 @@ class OpportunityController extends Controller
         }
     }
 
+
+
+    public function update(Request $request, $id)
+{
+    try {
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            "opportunity_name" => "required",
+            "close_date" => "required",
+            "forecast" => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'error' => $validator->errors()->first(),
+            ], 200);
+        }
+
+        $opportunity = Opportunity::findOrFail($id);
+
+        if ($request->client_name) {
+            $client = Client::create([
+                'name' => $request->client_name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+            ]);
+            $client_id = $client->id;
+        } else {
+            $client_id = $request->client;
+        }
+
+        if ($request->client_name) {
+            CompanyClient::create([
+                'company_id' => $request->company_id,
+                'client_id' => $client->id,
+                'status' => 'Active',
+            ]);
+        }
+
+        $opportunity->update([
+            'name' => $request->opportunity_name,
+            'company_id' => $request->company_id,
+            'client_id' => $client_id,
+            'close_date' => $request->close_date,
+            'description' => $request->decription,
+            'amount' => $request->amount,
+            'updated_by'=>$request->updated_by,
+            'opportunity_forecast_id' => $request->forecast,
+        ]);
+
+        $stages = Opportunity::getOpportunityStages($request->company_id);
+
+        $stage = $stages->firstWhere('name', $request->stage);
+
+        $opportunityStage = OpportunityStage::where('opportunity_id', $opportunity->id)->first();
+
+        if ($opportunityStage) {
+            $opportunityStage->update([
+                'stage' => $request->stage,
+                'amount' => $request->amount,
+                'probability' => $request->probability ? $request->probability : $stage->probability,
+            ]);
+        }
+        DB::commit();
+
+        $data = [
+            'opportunity' => Opportunity::with('OpportunityStages', 'forecast', 'contactPeople', 'client', 'owner')->find($opportunity->id),
+        ];
+
+        return $this->returnJsonResponse(true, 'Opportunity Successfully updated', $data);
+
+    } catch (\Exception $exception) {
+        DB::rollBack();
+        Log::error($exception->getMessage());
+        return $this->returnJsonResponse(false, $exception->getMessage(), []);
+    }
+}
+
+
+
+    public function destroy(Request $request, $id)
+{
+    try {
+        DB::beginTransaction();
+
+        $opportunity = Opportunity::find($id);
+
+        if (!$opportunity) {
+            return response()->json([
+                'status' => false,
+                'error' => 'Opportunity not found',
+            ], 404);
+        }
+
+        $opportunity->deleted_by = $request->deleted_by; 
+        $opportunity->save();
+
+        $opportunity->delete();
+
+        DB::commit();
+
+        $data = [
+            'opportunity' =>$opportunity,
+        ];
+
+        return $this->returnJsonResponse(true, 'Opportunity successfully deleted', $data);
+        
+    } catch (\Exception $exception) {
+        DB::rollBack();
+        Log::error($exception->getMessage());
+        return $this->returnJsonResponse(false, $exception->getMessage(), []);
+    }
+}
+
+
     public function add_contact_person(Request $request, $opportunity_id)
+
     {
         try {
             $opportunity = Opportunity::findorfail($opportunity_id);
@@ -168,24 +286,31 @@ class OpportunityController extends Controller
 
     }
 
-    public function change_opportunity_status(Request $request, $opportunity_id)
+    public function change_opportunity_stage(Request $request, $opportunity_id)
     {
         DB::beginTransaction();
         try {
             $opportunity = Opportunity::findorfail($opportunity_id);
             $opportunityStages = Opportunity::getOpportunityStages($request->company_id);
             $requestOpportunityStage = $opportunityStages->firstWhere('name', $request->stage);
-
+        
             OpportunityStage::create([
                 'opportunity_id' => $opportunity->id,
                 'stage' => $request->stage,
                 'created_date' => Carbon::now(),
                 'created_by' => $request->creator,
                 'amount' => $request->amount,
+                'status'=>$request->status,
                 'probability' => $request->probability ? $request->probability : $requestOpportunityStage->probability,
             ]);
 
+            //
             DB::commit();
+            $data = [
+                'opportunity' => Opportunity::with('OpportunityStages', 'forecast', 'contactPeople', 'client','owner')->find($opportunity->id),
+            ];
+
+            return $this->returnJsonResponse(true, 'Stage updated Successfully', $data);
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error($exception->getMessage());

@@ -14,6 +14,7 @@ return new class extends Migration
             $table->id();
             $table->integer('opportunity_id')->nullable();
             $table->string('stage');
+          //  $table->enum('status', ['Open', 'Won', 'Lost'])->default('Open');
             $table->dateTime('created_date');
             $table->integer('created_by');
             $table->decimal('amount', 15, 2)->nullable();

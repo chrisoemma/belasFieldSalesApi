@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->decimal('amount', 15, 2)->nullable();
             $table->integer('opportunity_forecast_id')->nullable();
+            $table->integer('deleted_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

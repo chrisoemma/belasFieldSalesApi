@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class LeadController extends Controller
 {
@@ -62,13 +63,25 @@ class LeadController extends Controller
         DB::beginTransaction();
         try {
             //create lead
+
+            $validator = Validator::make($request->all(), [
+                "last_name" => "required",
+                "company_name" => "required",
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'error' => $validator->errors()->first(),
+                ], 200);
+            }
           
             $lead = Lead::create([
                 'company_id' => $request->company_id,
-                'client_name' => $request->client_name,
+                'client_name' => $request->company_name,
                 'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
                 'phone_number'=>$request->phone_number,
-                'first_name' => $request->last_name,
                 'created_date' => Carbon::now(),
                 'country_id' => $request->country,
                 'gender' => $request->gender,
@@ -167,6 +180,7 @@ class LeadController extends Controller
 
     public function destroy($id)
     {
+
         DB::beginTransaction();
         try {
             $lead = Lead::findOrFail($id);

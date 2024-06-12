@@ -84,7 +84,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'opportunities'], function () {
         Route::get('company_opportunities_stages/{company_id}',[OpportunityController::class,'currentOppoturnityStages']);
         Route::get('company_opportunities/{company_id}',[OpportunityController::class,'company_opportunities']);
-        Route::get('person_opportunities/{company_id}/{user_id}',[LeadController::class,'person_opportunities']);
+        Route::get('person_opportunities/{company_id}/{user_id}',[OpportunityController::class,'person_opportunities']);
+        Route::Put('change_opportunity_stage/{id}',[OpportunityController::class,'change_opportunity_stage']);
     });
  
 
