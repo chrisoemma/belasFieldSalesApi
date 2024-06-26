@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->string('alt_phone_number')->nullable();
             $table->integer('country_id')->nullable();
-            $table->integer('client_id')->nullable();
+            $table->integer('client_id')->constrained('clients')->nullable();
             $table->string('gender')->nullable();
             $table->enum('prefered_channel',['email','phone','whatsapp','twitter'])->nullable();
-            $table->integer('position_id')->nullable();
+            $table->integer('position_id')->nullable()->constrained('positions')->onDelete('set null');;
             $table->softDeletes();
             $table->timestamps();
         });

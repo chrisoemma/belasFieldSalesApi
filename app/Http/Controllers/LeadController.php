@@ -23,7 +23,7 @@ class LeadController extends Controller
     {
         try {
 
-            $leads = Lead::with('client', 'leadStatus', 'manualScoring','owner')
+            $leads = Lead::with('client', 'leadStatus', 'manualScoring','owner','industry','source')
             ->where('company_id',$company_id)
             ->where('is_converted', false)->get();
             $data = ['leads' => $leads];
@@ -40,7 +40,7 @@ class LeadController extends Controller
     {
         try {
 
-            $leads = Lead::with('client', 'leadStatus', 'manualScoring','owner')
+            $leads = Lead::with('client', 'leadStatus', 'manualScoring','owner','industry','source')
             ->where('created_by',$user_id)
             ->where('company_id',$company_id)
             ->where('is_converted', false)->get();
@@ -80,14 +80,18 @@ class LeadController extends Controller
                 'company_id' => $request->company_id,
                 'client_name' => $request->company_name,
                 'first_name' => $request->first_name,
+                'website'=>$request->website,
                 'last_name' => $request->last_name,
                 'phone_number'=>$request->phone_number,
+                'email'=>$request->email,
+                'title'=>$request->title,
+                'industry_id'=>$request->industry,
                 'created_date' => Carbon::now(),
-                'country_id' => $request->country,
-                'gender' => $request->gender,
-                'position_id' => $request->position,
+                'number_of_employees'=>$request->number_employees,
+                'description'=>$request->description,
+                'country' => $request->country,
                 'created_by' => $request->creator,
-                'source_id' => $request->source,
+                'source_id' => $request->lead_source,
             ]);
 
             $lead_scoring = LeadScoring::create([
@@ -103,12 +107,13 @@ class LeadController extends Controller
                 'created_date' => Carbon::now(),
                 'created_by' => $request->creator,
                 'lead_scoring_id' => $lead_scoring->id,
+                'number_of_employees'=>$request->number_employees,
             ]);
 
             DB::commit();
 
             $data = [
-                'lead' => Lead::with('client', 'leadStatus', 'manualScoring','owner' )->find($lead->id),
+                'lead' => Lead::with('client', 'leadStatus', 'manualScoring','owner','industry','source' )->find($lead->id),
             ];
 
             return $this->returnJsonResponse(true, 'Lead Successfully created', $data);
@@ -144,32 +149,38 @@ class LeadController extends Controller
             $lead = Lead::findOrFail($id);
              
             $lead->update([
-                'is_converted' => $request->is_converted,
-                'client_name' => $request->client_name,
+                'company_id' => $request->company_id,
+                'client_name' => $request->company_name,
                 'first_name' => $request->first_name,
-                'first_name' => $request->last_name,
-                'country_id' => $request->country,
-                'gender' => $request->gender,
-                'position_id' => $request->position,
-                'created_by' => $request->creator,
-                'source_id' => $request->source,
+                'website'=>$request->website,
+                'last_name' => $request->last_name,
+                'phone_number'=>$request->phone_number,
+                'email'=>$request->email,
+                'title'=>$request->title,
+                'industry_id'=>$request->industry,
+                'updated_by' => $request->updated_by,
+                'number_of_employees'=>$request->number_employees,
+                'description'=>$request->description,
+                'country' => $request->country,
+                'source_id' => $request->lead_source,
+                
             ]);
 
-            if ($request->has('lead_status')) {
-                $lead->leadStatus()->update([
-                    'status' => $request->lead_status,
-                ]);
-            }
+            // if ($request->has('lead_status')) {
+            //     $lead->leadStatus()->update([
+            //         'status' => $request->lead_status,
+            //     ]);
+            // }
 
-            if ($request->has('manual_scoring')) {
-                $lead->manualScoring()->update([
-                    'manual_scoring_id' => $request->manual_scoring,
-                ]);
-            }
+            // if ($request->has('manual_scoring')) {
+            //     $lead->manualScoring()->update([
+            //         'manual_scoring_id' => $request->manual_scoring,
+            //     ]);
+            // }
 
             DB::commit();
 
-            $data = ['lead' => $lead->load('client', 'leadStatus', 'manualScoring','owner')];
+            $data = ['lead' => $lead->load('client', 'leadStatus', 'manualScoring','owner','industry','source')];
             return $this->returnJsonResponse(true, 'Lead Successfully updated', $data);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -178,17 +189,19 @@ class LeadController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
 
         DB::beginTransaction();
         try {
             $lead = Lead::findOrFail($id);
+            $lead->deleted_by=$request->deleted_by;
+            $lead->save();
             $lead->delete();
             DB::commit();
 
             $data = [
-                'lead' => Lead::with('client', 'leadStatus', 'manualScoring','owner')->find($lead->id),
+                'lead' => $lead,
             ];
             return $this->returnJsonResponse(true, 'Lead Successfully deleted', $data);
 
@@ -204,6 +217,7 @@ class LeadController extends Controller
     public function change_lead_status(Request $request, $lead_id)
 {
     try {
+        
         DB::beginTransaction();
         $lead = Lead::find($lead_id);
 
@@ -285,7 +299,7 @@ class LeadController extends Controller
                     'stage' => $stage->name,
                     'created_date' => Carbon::now(),
                     'created_by' => $request->creator,
-                    'probability' => $request->probability ? $request->probability : $stage->probability,
+                    'probability' => $stage->probability,
                 ]);
             }
 
@@ -293,7 +307,7 @@ class LeadController extends Controller
         }
 
         $data = [
-            'lead' => Lead::with('client', 'leadStatus', 'manualScoring','owner')->find($lead->id),
+            'lead' => Lead::with('client', 'leadStatus', 'manualScoring','owner','industry','source')->find($lead->id),
         ];
         return $this->returnJsonResponse(true, 'Status successfully updated', $data);
 
@@ -318,6 +332,7 @@ class LeadController extends Controller
         Log::error($exception->getMessage());
         return $this->returnJsonResponse(false, $exception->getMessage(), []);
     }
+    
     }
 
 }

@@ -57,6 +57,7 @@ class AuthController extends Controller
     {
 
         try {
+            
             $validator = Validator::make($request->all(), [
                 //'name' => 'required|min:3',
                 'phone_number' => 'required|unique:users',

@@ -15,8 +15,9 @@ return new class extends Migration
 
     {
         Schema::create('leads', function (Blueprint $table) {
+            
             $table->id();
-            $table->integer('company_id');
+            $table->foreignId('company_id')->constrained('companies')->nullable();
             $table->string('client_name')->nullable();
             $table->string('first_name')->nullable();
             $table->string('phone_number')->nullable();
@@ -25,10 +26,18 @@ return new class extends Migration
             $table->dateTime('created_date');
             $table->string('title')->nullable();
             $table->integer('country_id')->nullable();
-            $table->integer('position_id')->nullable();
-            $table->integer('created_by');
-            $table->integer('source_id')->nullable();
-            $table->boolean('is_converted')->default('false');
+            $table->string('country')->nullable();
+            $table->string('email')->nullable();
+            $table->integer('position_id')->nullable()->constrained('positions')->onDelete('set null');
+            $table->integer('industry_id')->nullable()->constrained('industries')->onDelete('set null');
+            $table->integer('source_id')->nullable()->constrained('sources')->onDelete('set null');
+            $table->boolean('is_converted')->default(false);
+            $table->string('website')->nullable();
+            $table->string('number_of_employees')->nullable();
+            $table->text('description')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
         });

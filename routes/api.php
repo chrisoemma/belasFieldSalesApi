@@ -12,6 +12,7 @@ use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\CheckOutController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\LeadSourceController;
 use App\Http\Controllers\LeadStatusConfigurableController;
 use App\Http\Controllers\LeadStatusDefaultController;
 use App\Http\Controllers\ManualScoringController;
@@ -67,17 +68,16 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('task_status_update/{id}',[TaskController::class,'update_task_status']);
     });
 
-
-
     Route::group(['prefix' => 'users'], function () {
         Route::get('sales_people/{company_id}/{user_id}',[Usercontroller::class,'sales_people']);
     });
-
 
     Route::group(['prefix' => 'leads'], function () {
         Route::get('company_lead_statuses/{company_id}',[LeadController::class,'currentLeadStatus']);
         Route::get('company_leads/{company_id}',[LeadController::class,'company_leads']);
         Route::get('person_leads/{company_id}/{user_id}',[LeadController::class,'person_leads']);
+        Route::put('change_lead_status/{lead_id}',[LeadController::class,'change_lead_status']);
+        
     });
 
 
@@ -103,6 +103,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::Resource('opportunity_default_stages', OpportunityDefaultStageController::class);
     Route::Resource('opportunity_stage_configurables', OpportunityStageConfigurableController::class);
     Route::Resource('opportunity_forecasts', OpportunityForecastController::class);
+    Route::Resource('lead_sources', LeadSourceController::class);
 
     Route::group(['prefix' => 'punch_records'], function () {
         Route::post('punch_in/{user_id}',[PunchRecordController::class,'punchIn']);

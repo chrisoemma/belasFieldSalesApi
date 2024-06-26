@@ -24,9 +24,12 @@ class Opportunity extends Model
         if ($config && $config->is_configurable) {
             return DB::table('opportunity_stage_configurables')
                      ->where('company_id', $companyId)
+                     ->orderBy('level')
                      ->get();
         } else {
-            return DB::table('opportunity_default_stages')->get();
+            return DB::table('opportunity_default_stages')
+            ->orderBy('level')
+            ->get();
         }
     }
 

@@ -15,17 +15,18 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('decription')->nullable();
+            $table->foreignId('company_id')->constrained('companies')->nullable();
+            $table->string('subject');
+            $table->text('decription')->nullable();
             $table->timestamp('due_date')->nullable();
-            $table->enum('status',['Pending','In Progress','Completed']);
-            $table->integer('assigned_to');
-            $table->integer('assigned_by');
+            $table->enum('status',['Not Started','In Progress','Completed','Deferred','Waiting on someone else']);
+            $table->integer('assigned_to')->constrained('users')->nullable();
+            $table->integer('assigned_by')->constrained('users')->nullable();
             $table->enum('priority',['Low','Medium','High','Urgent']);
-            $table->integer('created_by');
-            $table->integer('updated_by')->nullable();
-            $table->integer('company_id');
-            $table->integer('lead_id')->nullable();
+            $table->foreignId('checkin_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
         });

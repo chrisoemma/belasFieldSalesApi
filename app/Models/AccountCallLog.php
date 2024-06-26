@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Meeting extends Model
+class AccountCallLog extends Model
 {
     use HasFactory;
 }

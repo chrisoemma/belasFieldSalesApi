@@ -11,7 +11,31 @@ class Lead extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'company_id',
+        'client_name',
+        'first_name',
+        'phone_number',
+        'last_name',
+        'gender',
+        'email',
+        'created_date',
+        'industry_id',
+        'title',
+        'country_id',
+        'country',
+        'position_id',
+        'created_by',
+        'source_id',
+        'is_converted',
+        'website',
+        'number_of_employees',
+        'description',
+        'deleted_by',
+        'updated_by'
+        
+
+    ];
 
     public static function getLeadStatuses($companyId)
     
@@ -24,15 +48,18 @@ class Lead extends Model
         if ($config && $config->is_configurable) {
             return DB::table('lead_status_configurable')
                      ->where('company_id', $companyId)
+                     ->orderBy('level')
                      ->get();
         } else {
-            return DB::table('lead_status_defaults')->get();
+            return DB::table('lead_status_defaults')
+            ->orderBy('level')
+            ->get();
         }
     }
 
     public function leadStatus()
     {
-        return $this->hasOne(LeadStatus::class);
+        return $this->hasMany(LeadStatus::class);
     }
 
     public function client()
@@ -72,5 +99,15 @@ class Lead extends Model
     public function owner()
     {
         return $this->belongsTo(User::class,'created_by');
+    }
+
+    public function source()
+    {
+        return $this->belongsTo(LeadSource::class,'source_id');
+    }
+
+    public function industry()
+    {
+        return $this->belongsTo(Industry::class);
     }
 }

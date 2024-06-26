@@ -6,32 +6,35 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-  
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
-
     {
-        Schema::create('opportunities', function (Blueprint $table) {
+        Schema::create('call_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
             $table->foreignId('company_id')->constrained('companies')->nullable();
-            $table->integer('client_id')->constrained('clients')->nullable();
-            $table->integer('lead_id')->constrained('leads')->nullable();
-            $table->dateTime('close_date');
-            $table->dateTime('created_date');
-            $table->text('description')->nullable();
-            $table->decimal('amount', 15, 2)->nullable();
-            $table->integer('opportunity_forecast_id')->constrained('opportunity_forecasts')->nullable();
+            $table->dateTime('call_date')->nullable();
+            $table->string('duration')->nullable();
+            $table->text('agenda')->nullable();
+            $table->softDeletes();
             $table->integer('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->integer('updated_by')->nullable()->constrained('users')->onDelete('set null');
             $table->integer('deleted_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->softDeletes();
+            $table->enum('status', ['Scheduled', 'In Progress', 'Completed', 'Cancelled'])->default('Completed');
             $table->timestamps();
         });
     }
 
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
-        Schema::dropIfExists('opportunities');
+        Schema::dropIfExists('call_logs');
     }
 };

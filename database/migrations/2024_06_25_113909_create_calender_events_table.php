@@ -13,17 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('meetings', function (Blueprint $table) {
+        Schema::create('calender_events', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
+            $table->foreignId('company_id')->constrained('companies')->nullable();
+            $table->text('subject')->nullable();
             $table->text('agenda')->nullable();
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
             $table->string('duration')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('user_id')->nullable();
-            $table->integer('client_id')->nullable();
+            $table->foreignId('client_id')->constrained('clients')->nullable();
             $table->softDeletes();
+            $table->integer('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->integer('updated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->integer('deleted_by')->nullable()->constrained('users')->onDelete('set null');
             $table->enum('status', ['Scheduled', 'In Progress', 'Completed', 'Cancelled'])->default('Scheduled');
             $table->timestamps();
         });
@@ -36,6 +40,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('meetings');
+        Schema::dropIfExists('calender_events');
     }
 };

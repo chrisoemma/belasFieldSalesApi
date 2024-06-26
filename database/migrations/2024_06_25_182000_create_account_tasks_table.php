@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('rescheduled_meetings', function (Blueprint $table) {
+        Schema::create('account_tasks', function (Blueprint $table) {
             $table->id();
-            $table->integer('check_in_id')->nullable();
-            $table->integer('meeting_id')->nullable();
-            $table->dateTime('original_meeting_datetime');
-            $table->dateTime('rescheduled_meeting_datetime');
-            $table->string('rescheduled_meeting_location');
-            $table->text('reason')->nullable();
+            $table->foreignId('account_id')->constrained('clients')->onDelete('cascade');
+            $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rescheduled_meetings');
+        Schema::dropIfExists('account_tasks');
     }
 };
